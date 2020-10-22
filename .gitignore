@@ -1,5 +1,13 @@
+.eggs
+.history
 TSN/data
 TSN/output
 TSN/log
-.eggs
 TSN/modelzoo
+Pix2Pix/data/
+Pix2Pix/log/
+Pix2Pix/models/
+SRGAN/data/
+SRGAN/log/
+SRGAN/models/
+
