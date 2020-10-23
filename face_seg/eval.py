@@ -20,7 +20,7 @@ def parse_args():
 
     # for oneflow
     parser.add_argument("--gpu_num_per_node", type=int, default=1, required=False)
-    parser.add_argument("--model_load_dir", type=str, default='./output/save_model/faceseg_model', required=False, help="model load directory")
+    parser.add_argument("--model_load_dir", type=str, default='./faceseg_model', required=False, help="model load directory")
     parser.add_argument("--dataset_dir", type=str, default='./data/', required=False, help="dataset root directory")
     parser.add_argument("--img_height", type=int, default=256, required=False)
     parser.add_argument("--img_width", type=int, default=256, required=False)

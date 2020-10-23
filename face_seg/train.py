@@ -23,7 +23,7 @@ def parse_args():
     # for oneflow
     parser.add_argument("--gpu_num_per_node", type=int, default=1, required=False)
     parser.add_argument("--lr", type=int, default=0.01, required=False, help="learning rate")
-    parser.add_argument("--model_load_dir", type=str, default='./model_resnet34/', required=False, help="model load directory")
+    parser.add_argument("--model_load_dir", type=str, default='./faceseg_backbones', required=False, help="model load directory")
     parser.add_argument("--dataset_dir", type=str, default='./data/', required=False, help="dataset root directory")
     parser.add_argument("--log_dir", type=str, default="./output", required=False, help="log info save directory")
     parser.add_argument("--out_dir", type=str, default="./output/save_model/", required=False)

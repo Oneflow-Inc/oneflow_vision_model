@@ -5,8 +5,6 @@ This posts is about face recognition based on LinkNet34, our work is inspired by
 
 
 
-## Dependencies
-
 ## Get started
 
 ### Installation
@@ -24,11 +22,14 @@ pip install oneflow
 
 We provide compressed dataset, please download dataset from [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_data.zip) , unzip it and put it in `./data`
 
-Besides, we provide pretrained model [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_model.zip) , download and unzip it.
-
 
 
 ### Train a model
+
+Our model is trained using ResNet backbones, which can be downloaded  [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_backbones.zip) , download and unzip it.
+
+
+
 To train a model, running
 
 ```python train.py```
@@ -44,6 +45,6 @@ To test a model, running
 
 ### Results demonstration
 
-
+Besides, we provide pretrained model [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_model.zip) , download and unzip it.
 
 <img src = './img/faceseg_vi.png'>
