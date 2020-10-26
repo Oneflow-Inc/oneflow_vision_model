@@ -11,3 +11,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 
 
 The details of each project can be found in the corresponding folders. 
+
+## License
+[Apache License 2.0](LICENSE)
+
