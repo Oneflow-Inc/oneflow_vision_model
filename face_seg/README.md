@@ -1,7 +1,7 @@
 # Face Segmentastion
 
 ## Introduction
-This posts is about face recognition based on LinkNet34, our work is inspired by [implementaion](https://github.com/JiaojiaoYe1994/face-segmentation).
+This post is about face segmentation based on LinkNet34, our work is inspired by [implementaion](https://github.com/JiaojiaoYe1994/face-segmentation).
 
 
 
@@ -46,5 +46,8 @@ To test a model, running
 ### Results demonstration
 
 Besides, we provide pretrained model [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_model.zip) , download and unzip it.
+
+
+The flowing is some demonstrations.
 
 <img src = './img/faceseg_vi.png'>
