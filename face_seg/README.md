@@ -1,7 +1,7 @@
 # Face Segmentastion
 
 ## Introduction
-This post is about face segmentation based on LinkNet34, our work is inspired by [implementaion](https://github.com/JiaojiaoYe1994/face-segmentation).
+This post is about face segmentation based on LinkNet34, our work is inspired by this PyTorch [implementaion](https://github.com/JiaojiaoYe1994/face-segmentation).
 
 
 
@@ -60,4 +60,7 @@ We compare visualization performance of our OneFlow model with PyTorch benchmark
 
 To better show the performance, the following is a real-world demonstration of our face segmentation model. 
 
-![faceseg_demo](/home/jiaojiao/jiaojiao/project/dubhe/git/github/oneflow_vision_model/face_seg/img/faceseg_demo.gif)
+
+
+![](./img/faceseg_demo.gif){:height="50%" width="50%" align="center"}
+
