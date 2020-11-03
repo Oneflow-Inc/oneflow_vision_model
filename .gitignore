@@ -1,5 +1,7 @@
 .eggs
 .history
+.idea
+Re-ID/.idea
 TSN/data
 TSN/output
 TSN/log

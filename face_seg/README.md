@@ -1,4 +1,4 @@
-# Face Segmentastion
+# Face Segmentation
 
 ## Introduction
 This post is about face segmentation based on LinkNet34, our work is inspired by this PyTorch [implementaion](https://github.com/JiaojiaoYe1994/face-segmentation).
