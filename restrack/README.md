@@ -38,4 +38,4 @@ we provide pretrained model [here](https://oneflow-static.oss-cn-beijing.aliyunc
 
 [demo.avi](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/restrack/demo.avi) , [demo_res.avi](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/restrack/demo_res.avi)
 
-![](./demo_res 00_00_00-00_00_30~1.gif){:height="50%" width="50%" align="center"}
+![](https://github.com/Oneflow-Inc/oneflow_vision_model/blob/main/restrack/demo_res%2000_00_00-00_00_30~1.gif)
