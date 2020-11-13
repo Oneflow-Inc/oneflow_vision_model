@@ -8,6 +8,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [SRGAN](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/SRGAN)
 * [Face Segmentation](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/face_seg)
 * [Action Recognition](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TSN)
+* [Restrack](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/restrack)
 
 
 The details of each project can be found in the corresponding folders. 

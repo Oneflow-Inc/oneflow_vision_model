@@ -10,7 +10,7 @@ mmcv==1.0.5<br>
 ## Get started
  
 ### Data preparation
-down data,unzip and put it in "./data".<br>
+download data,unzip and put it in "./data".<br>
 If you want to run train and test on small dataset(about 4.7G), please download dataset [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/kinetics400.zip), use kinetics400_train_list_videos_small.txt and kinetics400_val_list_videos_small.txt.<br>
 If you want to run train and test on large dataset(about 135G), please download dataset [here](https://github.com/activitynet/ActivityNet/tree/master/Crawler/Kinetics), use kinetics400_train_list_videos.txt and kinetics400_val_list_videos.txt.<br>
 ### download pretrain backbone model

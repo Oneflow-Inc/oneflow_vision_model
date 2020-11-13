@@ -65,10 +65,10 @@ class Extractor():
             features = []
             for ind in input:
                 datest = one_batch_image_preprocess(ind, 256, 128)
-                print('hello0',datest.shape)
+
                 outs = reid_eval_job(datest).get()
 
-                print('out',outs.ndarray_list_[0].shape)
+
                 features.append(outs.ndarray_list_[0])
             features = np.vstack(features)
             return features
