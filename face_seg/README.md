@@ -45,6 +45,15 @@ To test a model, running
 
 ### Results demonstration
 
+We compare our model with baseline implemented using PyTorch, our model on OneFlow performs even little bit better on train dataset than baseline. The result  is shown in the following,
+
+|         | Train IoU (%) | Test IoU (%) |
+| :------ | :-----------: | -----------: |
+| PyTorch |    92.815     |       92.689 |
+| OneFlow |    93.023     |     92.595\| |
+
+
+
 Besides, we provide pretrained model [here](https://oneflow-static.oss-cn-beijing.aliyuncs.com/train_data_zjlab/faceseg_model.zip) , download and unzip it.
 
 <img src = './img/faceseg_vi.png'>
