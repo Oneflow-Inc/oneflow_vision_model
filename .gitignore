@@ -1,5 +1,8 @@
 .eggs
 .history
+.idea
+__pycache__
+Re-ID/.idea
 TSN/data
 TSN/output
 TSN/log
