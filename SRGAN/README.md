@@ -25,5 +25,5 @@ If you just want to run test, you can download pretrained model [here](https://o
  
 ### Test a model
 You can test an image or images with the same or different shape.
-python of_pixpix.py --test
+python of_srgan.py --test
 
