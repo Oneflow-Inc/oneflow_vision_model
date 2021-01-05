@@ -321,13 +321,11 @@ class SRGAN:
 
             return d_loss
 
-        check_point = flow.train.CheckPoint()
         # load trained weight of vgg16bn and initialize automatically GAN model
-        check_point.load(self.vgg_path)
+        flow.load_variables(flow.checkpoint.get(self.vgg_path))
 
         # trained weights of vgg need to be changed, because vgg is used twice like Discriminator. Please use weights in of_vgg16bn_reuse path to load vgg for perceptual loss.
-        # check_point.init()
-        # check_point.save("vgg_checkpoint")
+        # flow.checkpoint.save("vgg_checkpoint")
 
         batch_num = len(train_hr_data) // self.batch_size
         pre_best, best_psnr = -1, 0
@@ -407,9 +405,7 @@ class SRGAN:
                         shutil.rmtree(os.path.join(self.checkpoint_path, "{}th_epoch".format(pre_best)))
 
                     # save parameters
-                    check_point.save(
-                        os.path.join(self.checkpoint_path, "{}th_epoch".format(epoch_idx + 1))
-                    )
+                    flow.checkpoint.save(os.path.join(self.checkpoint_path, "{}th_epoch".format(epoch_idx + 1)))
                     pre_best = epoch_idx + 1
                     print("save the best {}th epoch model at {}.".format(epoch_idx + 1, str(datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))))
 
@@ -508,8 +504,8 @@ class SRGAN:
             g_out = self.Generator(input, trainable=True)
             return g_out
 
-        check_point = flow.train.CheckPoint()
-        check_point.load(model_path)
+        
+        flow.load_variables(flow.checkpoint.get(model_path))
         if image.shape != (1, 3, H, W):
             image = np.expand_dims(image, axis=0)
         result = eval_generator(image)
@@ -541,8 +537,8 @@ if __name__ == "__main__":
     help="the number of residual blocks in Generator")
     parser.add_argument("--label_smooth", type=float, default=0, required=False)
     parser.add_argument("--test", action='store_true', default=False)
-    parser.add_argument("--test_image", default="", type=str)
-    parser.add_argument("--test_images", default="", type=str)
+    parser.add_argument("--test_image", default="monarchx4.png", type=str)
+    parser.add_argument("--test_images", default="./", type=str)
 
     args = parser.parse_args()
     print(args)
@@ -575,4 +571,3 @@ if __name__ == "__main__":
                 else:
                     continue
 
-  
