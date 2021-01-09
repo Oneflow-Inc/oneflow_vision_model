@@ -488,11 +488,11 @@ class TTSR:
                     if pre_best != -1:
                         # delete the previous best checkpoint
                         print("delete the previous best {}th epoch model".format(pre_best))
-                        shutil.rmtree(os.path.join(self.checkpoint_path, "of_ttsr"))
+                        shutil.rmtree(os.path.join(self.checkpoint_path, "{}th_epoch".format(pre_best)))
 
                     # save parameters
                     check_point.save(
-                        os.path.join(self.checkpoint_path, "of_ttsr")
+                        os.path.join(self.checkpoint_path, "{}th_epoch".format(epoch_idx + 1))
                     )
                     pre_best = epoch_idx + 1
                     print("save the best {}th epoch model at {}.".format(epoch_idx + 1, str(datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))))
@@ -687,15 +687,7 @@ if __name__ == "__main__":
     parser.add_argument("--vgg_path", type=str, default="./models/of_vgg16bn_reuse", required=False)
     parser.add_argument("--lr", type=float, default=1e-4, required=False)
     parser.add_argument("--batch_size", type=int, default=9, required=False)
-    parser.add_argument("--test", action='store_true', default=True)
-    parser.add_argument("--eval", action='store_true', default=False)
-    parser.add_argument("--test_image", default="", type=str)
-    parser.add_argument('--lr_path', type=str, default='./test/demo/lr/0.png',
-                        help='The path of input lr image when testing')
-    parser.add_argument('--ref_path', type=str, default='./test/demo/ref/0.png',
-                        help='The path of ref image when testing')
-    parser.add_argument('--save_dir', type=str, default='./test/demo/output',
-                        help='Directory to save log, arguments, models and images')
+    parser.add_argument("--test", action='store_true', default=False)
 
     args = parser.parse_args()
     print(args)
@@ -706,5 +698,5 @@ if __name__ == "__main__":
         ttsr.train(epochs=args.epochs)
     else:
         # test
-        model_path = "./models/of_ttsr"
+        model_path = "./models/of_ttsr_best_checkpoints"
         ttsr.test(model_path)
