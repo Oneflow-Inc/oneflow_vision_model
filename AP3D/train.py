@@ -350,7 +350,7 @@ def main():
                 shutil.rmtree(osp.join(args.save_dir,'checkpoint_ep' + str(pre_epoch))) 
             pre_epoch=epoch+1
             checkpoint.save(fpath)
-            save best
+           # save best
             if is_best:
                 best_fpath=osp.join(osp.dirname(fpath), 'best_model')
                 if os.path.exists(best_fpath):
