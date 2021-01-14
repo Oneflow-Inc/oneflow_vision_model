@@ -9,7 +9,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [Face Segmentation](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/face_seg)
 * [Action Recognition](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TSN)
 * [Restrack](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/restrack)
-
+* [TTSR](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TTSR)
 
 The details of each project can be found in the corresponding folders. 
 
