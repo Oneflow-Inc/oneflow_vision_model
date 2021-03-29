@@ -27,3 +27,4 @@ If you just want to run test, you can download pretrained model [here](https://o
 You can test an image or images with the same or different shape.
 python of_srgan.py --test
 
+![image](https://user-images.githubusercontent.com/12004134/112796226-47460080-909c-11eb-8c54-b92863bac1ae.png)
