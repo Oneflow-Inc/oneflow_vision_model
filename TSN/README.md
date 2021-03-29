@@ -23,3 +23,4 @@ python tools/train_recognizer_of.py
 ### Test a model
 python tools/test_recognizer_of.py
 
+![image](https://user-images.githubusercontent.com/12004134/112795594-52e4f780-909b-11eb-9146-dd1770129d11.png)
