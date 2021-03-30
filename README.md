@@ -11,6 +11,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [Restrack](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/restrack)
 * [TTSR](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TTSR)
 * [AP3D](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/AP3D)
+* [GhostNet](https://github.com/ZhengJianwei2/oneflow_vision_model/tree/main/ghostnet)
 
 The details of each project can be found in the corresponding folders. 
 
