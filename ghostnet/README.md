@@ -1,4 +1,6 @@
 ## The code of training
+
+
   python3 of_cnn_train_val.py \
     --train_data_dir=$DATA_ROOT/train \
     --train_data_part_num=256 \
@@ -25,9 +27,11 @@
 ## The code of inference
   The pre-trained model can be downloaded from BaiduNetdis code:64bp .
   
+  
   rm -rf core.* 
   MODEL_LOAD_DIR="ghostnet_best_model"
   python3 of_cnn_inference.py \
     --model="ghostnet" \
     --image_path="data/fish.jpg" \
     --model_load_dir=$MODEL_LOAD_DIR
+
