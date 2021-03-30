@@ -10,9 +10,11 @@ oneflow==0.3.2<br>
 ## Get started
  
 ### Prepare data
-Download [CUFED train set](https://drive.google.com/drive/folders/1hGHy36XcmSZ1LtARWmGL5OK1IUdWJi3I) and [CUFED test set](https://drive.google.com/file/d/1Fa1mopExA9YGG1RxrCZZn7QFTYXLx6ph/view), unzip and put it in "./data".
+Refer to the oneflow using cnn classification to prepare the corresponding data set.
+(https://github.com/Oneflow-Inc/OneFlow-Benchmark/tree/master/Classification/cnns).
 
 ### Train a model
+
  python3 of_cnn_train_val.py \
     --train_data_dir=$DATA_ROOT/train \
     --train_data_part_num=256 \
@@ -36,6 +38,7 @@ Download [CUFED train set](https://drive.google.com/drive/folders/1hGHy36XcmSZ1L
     --model="ghostnet" \
 
 ### Download pretrained model
+
   The pre-trained model can be downloaded from BaiduNetdis code:64bp .
   
   rm -rf core.* 
