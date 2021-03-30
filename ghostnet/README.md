@@ -10,8 +10,7 @@ oneflow==0.3.2<br>
 ## Get started
  
 ### Prepare data
-Refer to the oneflow using cnn classification to prepare the corresponding data set.
-(https://github.com/Oneflow-Inc/OneFlow-Benchmark/tree/master/Classification/cnns).
+Refer to the oneflow using [cnn-classification](https://github.com/Oneflow-Inc/OneFlow-Benchmark/tree/master/Classification/cnns) to prepare the corresponding data set.
 
 ### Train a model
 
@@ -41,7 +40,7 @@ Refer to the oneflow using cnn classification to prepare the corresponding data 
 
 ### Download pretrained model
 
-  The pre-trained model can be downloaded from BaiduNetdis[https://pan.baidu.com/s/1J6wfRS3AT9r7VenqHf9PDA] code:64bp .
+  The pre-trained model can be downloaded from [BaiduNetdis](https://pan.baidu.com/s/1J6wfRS3AT9r7VenqHf9PDA) code:64bp .
 
 ```
   rm -rf core.* 
