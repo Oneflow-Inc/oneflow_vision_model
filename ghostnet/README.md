@@ -50,3 +50,10 @@ Refer to the oneflow using [cnn-classification](https://github.com/Oneflow-Inc/O
     --image_path="data/fish.jpg" \
     --model_load_dir=$MODEL_LOAD_DIR
 ```
+
+### Compare
+
+|         | Validation TOP1 (%) | Validation TOPK (%) |
+| :------ | :----------------:  | ------------------: |
+|  Paper  |         66.2        |         86.6        |
+| OneFlow |         66.8        |         87.5      \||
