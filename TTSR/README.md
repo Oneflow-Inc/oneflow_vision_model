@@ -22,4 +22,10 @@ If you just want to run test, you can download pretrained model [here](https://d
 ### Test a model
 python of_ttsr.py --test
 
+### Compare
+|         |     PSNR      |      SSIM    |
+| :------ | :-----------: | -----------: |
+| PyTorch |    25.53      |     0.765    |
+| OneFlow |    25.30      |     0.764
+
 
