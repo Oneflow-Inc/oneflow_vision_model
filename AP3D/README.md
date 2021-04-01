@@ -27,3 +27,9 @@ python /home/luis/of_AP3D/test-all.py --root /home/luis/of_AP3D/ -d mars --arch 
       booktitle={ECCV},
       year={2020},
     }
+
+#### Compare
+|         |     Rank-1    |     MAP    |
+| :------ | :-----------: | ---------: |
+| PyTorch |     88.9%     |    83.4%   |
+| OneFlow |     85.5%     |    76.8%
