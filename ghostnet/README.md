@@ -56,4 +56,4 @@ Refer to the oneflow using [cnn-classification](https://github.com/Oneflow-Inc/O
 |         | Validation TOP1 (%) | Validation TOPK (%) |
 | :------ | :----------------:  | ------------------: |
 |  Paper  |         66.2        |         86.6        |
-| OneFlow |         66.8        |       87.5\|        |
+| OneFlow |         66.8        |       87.5 
