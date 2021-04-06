@@ -82,25 +82,21 @@ def main():
               .format(epoch+1,loss.mean(), corr/total))
     return train_loss, test_acc   
        
+def resplot(x, color, label):
+    plt.figure()
+    plt.plot(x,color)
+    plt.xlabel('epoch')
+    plt.ylabel(label)
+    plt.xlim(0,len(x)-1)
+    plt.ylim(0,1.1)
+    plt.title(label)
+    plt.show()
+      
 if __name__ == "__main__":
     train_loss, test_acc = main()
     flow.checkpoint.save("./lenet_models_1")
     print("model saved")
 
-    plt.figure()
-    plt.plot(train_loss)
-    plt.xlabel('epoch')
-    plt.ylabel('train_loss')
-    plt.xlim(0,9)
-    plt.ylim(0,1.1)
-    plt.title('train_loss')
-    plt.show()
-
-    plt.figure()
-    plt.plot(test_acc,color='orange')
-    plt.xlabel('epoch')
-    plt.ylabel('test_acc')
-    plt.xlim(0,9)
-    plt.ylim(0,1.1)
-    plt.title('test_acc')
-    plt.show()
+    resplot(train_loss, color='blue', label='train_loss')
+    
+    resplot(test_acc, color='orange', label='test_acc')
