@@ -6,7 +6,7 @@ This repo provides LeNet model.
 
 ## Installation
 
-Install the latest oneflow.
+Install the latest oneflow (0.3.5）.
 
 ## Get start
 
@@ -14,7 +14,7 @@ Install the latest oneflow.
 
 MNIST is a database of handwritten numbers. It includes a training set and a test set; the training set contains 60,000 images and their labels, and the test set contains 10,000 images and their labels. Yann LeCun and others have normalized and centered the images and binary file them for download (http://Yann.LeCun.com/exdb/mnist/) . The scripts covered in this article automatically download the MNIST dataset.
 
-###Train and Test
+### Train and Test
 
 To train and test the model, run python lenet.py
 
