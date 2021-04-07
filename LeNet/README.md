@@ -6,7 +6,7 @@ This repo provides LeNet model.
 
 ## Installation
 
-Install the latest oneflow (0.3.5）.
+Install oneflow==0.3.4
 
 ## Get start
 
