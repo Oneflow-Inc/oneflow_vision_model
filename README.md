@@ -13,6 +13,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [AP3D](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/AP3D)
 * [GhostNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/ghostnet)
 * [HRNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/Hrnet)
+* [LeNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/LeNet)
 
 The details of each project can be found in the corresponding folders. 
 
