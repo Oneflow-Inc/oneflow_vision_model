@@ -2,10 +2,6 @@ import oneflow as flow
 import oneflow.typing as tp
 import numpy as np
 
-"""
-感觉_get_initializer这一部分需要再考虑一下
-"""
-
 def _get_regularizer(model_name):
     #all decay
     return flow.regularizers.l2(0.00004)
@@ -216,13 +212,3 @@ def Mobilenet_Small(input_data, args, trainable=True, training=True, num_classes
     data_format="NHWC" if args.channel_last else "NCHW"
     out = MobileNetV3_Small(input_data, data_format=data_format, num_class=num_classes)
     return out
-
-"""
-@flow.global_function()
-def test_MNV3(x: tp.Numpy.Placeholder(shape=(2, 3, 320, 224)))->tp.Numpy:
-    return MobileNetV3_Large(x)
-
-x = np.random.randn(2, 3, 320, 224).astype(np.float32)
-print(test_MNV3(x))
-"""
-
