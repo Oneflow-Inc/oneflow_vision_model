@@ -4,7 +4,7 @@
 
 MobileNetV3 is a light network aiming at object classfication. It can also been used as backbone of other computer vision networks, e.g., instance segmentation, depth estimation.
 
-MobileNetV3 contains two models, i.e., MobileNetV3-Large and MobileNetV3-Small. Both of the models are written in the python file and can be applied.
+MobileNetV3 contains two models, i.e., ***MobileNetV3-Large*** and ***MobileNetV3-Small***. Both of the models are written in the python file and can be applied.
 
 ## Installation
 
@@ -18,7 +18,7 @@ Refer to the oneflow using [cnn-classification](https://github.com/Oneflow-Inc/O
 
 ### Train a model 
 
-Before training, it is necessary to add mobilenetv3_large and mobilenetv3_small model by changing part of_cnn_train_val.py:
+Before training, it is necessary to add *mobilenetv3_large* and *mobilenetv3_small* model by changing part *of_cnn_train_val.py*:
 
 ```
 model_dict = {
@@ -32,15 +32,20 @@ model_dict = {
     "resnext50": resnext_model.resnext50,
 }
 ```
-Also, import mobilenet_v3_model should be written in of_cnn_train_val.py.
+Also, import *mobilenet_v3_model* should be written in *of_cnn_train_val.py*.
 
-Then write the following command to train the model. Pay attention that either mobilenetv3_large or mobilenetv3_small should be defined.
+Then write the following command to train the model. Pay attention that either *mobilenetv3_large* or *mobilenetv3_small* should be defined.
 
 ```
 python3 of_cnn_train_val.py \
   --model="mobilenetv3_large"
 ```
 
-It is also practical to change config.py directly to train the model with mobilenetv3_large or mobilenetv3_small.
+It is also practical to change *config.py* directly to train the model with *mobilenetv3_large* or *mobilenetv3_small*.
 
 ### Compare
+
+|         | MobileNetV3-Large (%) | MobileNetV3-Small (%) |
+| :------: | :----------------:  | :------------------: |
+|  Paper  |         75.2        |         67.5        |
+| OneFlow |         70.5       |       (testing) 
