@@ -21,7 +21,11 @@ def _get_initializer(model_name):
 def _conv2d(name, x, filters, kernel_size, strides, num_group, padding="SAME", data_format="NCHW"):  # tested
     assert data_format=="NCHW", "Mobilenet does not support channel_last mode."
     weight_initializer = _get_initializer("weight")
+<<<<<<< HEAD
     weight_regularizer=_get_regularizer("beta")
+=======
+    weight_regularizer=_get_regularizer("beta")  # review it
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
 
     shape = (filters, x.shape[1] // num_group, kernel_size, kernel_size)
     weight = flow.get_variable(
@@ -31,7 +35,11 @@ def _conv2d(name, x, filters, kernel_size, strides, num_group, padding="SAME", d
         initializer=weight_initializer,
         regularizer=weight_regularizer,
         model_name="--weight",
+<<<<<<< HEAD
         trainable=True,
+=======
+        trainable=True,  # review it
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
     )
     return flow.nn.conv2d(x, weight, strides, padding, data_format, name=name, groups=num_group)
 
@@ -59,6 +67,10 @@ def hsigmoid(x):
     out = flow.nn.relu6(x + 3) / 6
     return out
 
+<<<<<<< HEAD
+=======
+# valid numbers outputted
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
 def SeModule(name, x, channel, reduction=4):
     N, C, H, W = x.shape
 
@@ -104,6 +116,10 @@ def small_unit(name, x, kernel_size=1, num_filter=1, strides=1, padding="SAME", 
     else:
         return bn
 
+<<<<<<< HEAD
+=======
+# valid numbers outputted. But may be strange.
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
 def mnv3_unit(name, x, kernel_size, expansion, num_filter, shortcut, strides, act, sechannel, data_format="NCHW"):
     # num_exp_filter = int(round(num_in_filter * expansion_factor))
     y = small_unit(name+"-mnv3_unit1", x, kernel_size=1, num_filter=expansion, strides=1, padding="VALID", num_group=1, act=act)
@@ -137,7 +153,12 @@ def MobileNetV3_Large(x, data_format="NCHW", num_class=1000):
     layer2 = small_unit("large-layer2", layerneck, num_filter=960, act="_hswish", padding="VALID")  # number > 1 exists
 
     layer_avg = flow.nn.avg_pool2d(layer2, ksize=[layer2.shape[2], layer2.shape[3]], strides=None, padding="VALID")  # review it 
+<<<<<<< HEAD
     layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1)) 
+=======
+    layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1))  # review it
+
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
     dense3 = flow.layers.dense(
         layer_view, 
         units=1280, 
@@ -178,6 +199,7 @@ def MobileNetV3_Small(x, data_format="NCHW", num_class=1000):
     layerneck = mnv3_unit("small-neck10", layerneck, 5, 576, 96, True, 1, "_hswish", 96)
     layerneck = mnv3_unit("small-neck11", layerneck, 5, 576, 96, True, 1, "_hswish", 96)
 
+<<<<<<< HEAD
     layer2 = small_unit("small-layer2", layerneck, num_filter=576, act="_hswish", padding="VALID")
     layer_avg = flow.nn.avg_pool2d(layer2, ksize=[layer2.shape[2], layer2.shape[3]], strides=None, padding="VALID")  # review it
     layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1))
@@ -191,6 +213,12 @@ def MobileNetV3_Small(x, data_format="NCHW", num_class=1000):
         bias_regularizer=_get_regularizer("bias"),
         name="dense3-large",
         )
+=======
+    layer2 = small_unit("small-layer2", layerneck, num_filter=576, act="_hswish")
+    layer_avg = flow.nn.avg_pool2d(layer2, ksize=[layer2.shape[2], layer2.shape[3]], strides=None, padding="VALID")  # review it
+    layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1))  # review it
+    dense3 = flow.layers.dense(layer_view, 1280)
+>>>>>>> c7ec222a7d728705e396bc7441bc3254f295d2c4
     bn3 = _batch_norms("bn3-large", dense3, axis=1, momentum=0.9, epsilon=1e-5)
     hs3 = hswish(bn3)
     dense4 = flow.layers.dense(
