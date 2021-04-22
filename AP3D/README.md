@@ -2,6 +2,8 @@
 
 ## Introduction
 This repo provides Appearance-Preserving 3D Convolution for Video-based Person Re-identification.
+## Installation
+oneflow==0.3b4<br>
 ## Get started
 ### Dataset
 Mars:
