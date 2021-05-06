@@ -48,4 +48,8 @@ It is also practical to change *config.py* directly to train the model with *mob
 |         | MobileNetV3-Large (%) | MobileNetV3-Small (%) |
 | :------: | :----------------:  | :------------------: |
 |  Paper  |         75.2        |         67.5        |
-| OneFlow |         70.5       |       (testing) 
+| OneFlow |         70.5       |       53.2
+
+ 
+As is shown in the table, both MobileNetV3-Large model and MobileNetV3-Small model has lower accuracy than that of paper.
+Modcl checking, especially parameter improvements have to be conducted to achieve higher accuracy.
