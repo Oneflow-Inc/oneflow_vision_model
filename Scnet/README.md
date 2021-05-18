@@ -6,7 +6,14 @@ Scnet is a vehicle color classification network based on scloss, which can be ea
 ## Installation
 
 oneflow==0.3.4 <br>
-visdom==0.1.8.9
+visdom==0.1.8.9<br>
+os
+math
+pillow
+numpy
+argparse
+datetime 
+time
 ## Get started
 ### Prepare data
 <br>Data preparation<br>
@@ -39,7 +46,7 @@ Code fbc4
  ```
 
 ### Performer of model
-|         | Top1 |
+|         | val(Top1) |
 | :-----: | :-----------------: |
 | resnet  |        0.892        |
 | scnet   |        0.907        |
