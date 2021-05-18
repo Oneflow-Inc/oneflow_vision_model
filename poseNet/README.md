@@ -9,7 +9,7 @@ oneflow==0.3.2
 ## Get started
  
 ### Prepare data
-Refer to the oneflow using [cnn-classification](https://github.com/Oneflow-Inc/OneFlow-Benchmark/tree/master/Classification/cnns) to prepare the corresponding data set.
+The face pose dataset can be downloaded from [BaiduNetdis](https://pan.baidu.com/s/1KbrMUrUIS_cCzpDgdgjMRQ) code: o9tg .
 
 ### Train a model
 ```
