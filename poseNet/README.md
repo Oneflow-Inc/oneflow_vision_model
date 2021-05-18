@@ -5,6 +5,12 @@ Posenet is a backbone network, we use it to classify face pose.
  
 ## Installation
 oneflow==0.3.2
+os
+math
+numpy
+time 
+datetime
+pandas
 
 ## Get started
  
