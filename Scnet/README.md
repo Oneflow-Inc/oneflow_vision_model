@@ -4,16 +4,10 @@
 Scnet is a vehicle color classification network based on scloss, which can be easily combined with different backbone networks.
 
 ## Installation
-
 oneflow==0.3.4 <br>
 visdom==0.1.8.9<br>
-os
-math
-pillow
-numpy
-argparse
-datetime 
-time
+pillow==8.2.0
+numpy==1.17.4
 ## Get started
 ### Prepare data
 <br>Data preparation<br>
