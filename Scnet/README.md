@@ -38,7 +38,7 @@ Code fbc4
  python inference.py --model_load_dir ./model/scnet_hustcolor_90.2_top1
  ```
 
-### Performen of model
+### Performer of model
 |         | Top1 |
 | :-----: | :-----------------: |
 | resnet  |        0.892        |
