@@ -42,7 +42,6 @@ the result is below:
 ```
 - Run the jam detector with visualization
 ```
- python jamDetector/generate_txt.py -dataset_path=your path/of_dataset/dataset
  python jamDetector/main.py -jam_dataset_path=your path/of_dataset/jamDataset -is_visualization=True
 ```
 the result of jam is below:  
@@ -53,6 +52,7 @@ the result of no jam is below:
 
 ### How to train car detector
 ```
+ python generate_txt.py -dataset_path=your path/of_dataset/dataset
  python detector/train.py 
 ```
 ## The evaluate result of jam detection
