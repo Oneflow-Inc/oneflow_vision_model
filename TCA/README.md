@@ -5,9 +5,9 @@ TCA is used for traffic congestion analysis.
 
 ## Installation
 oneflow==0.3.4<br>
-visdom==0.1.8.9<br>
-pillow==8.2.0<br>
-numpy==1.17.4<br>
+python-opencv==4.5.1<br>
+argparse==1.1<br>
+numpy==1.19.2<br>
 
 
 ## Get started
