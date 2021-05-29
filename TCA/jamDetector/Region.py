@@ -1,6 +1,6 @@
 import os
-from jamDetector.Utility import Utility
-from jamDetector.Config import Config
+from Utility import Utility
+from Config import Config
 import cv2
 
 
