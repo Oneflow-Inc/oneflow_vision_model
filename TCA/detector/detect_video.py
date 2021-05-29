@@ -66,10 +66,9 @@ def detect_video(video_filename, show = False, interest_rect = None):
         start_time = time.time()
         detect_img = img
         if interest_rect is not None:
-            interest_rect = double_rect(interest_rect)
             detect_img = img.copy()
             image_h, image_w, _ = detect_img.shape
-            l,t,r,b = interest_rect
+            l,t,r,b = double_rect(interest_rect)
             l = max(0,l)
             t = max(0,t)
             r = min(r,image_w)
