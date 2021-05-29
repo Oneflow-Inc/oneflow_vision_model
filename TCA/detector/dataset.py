@@ -2,8 +2,8 @@ import os
 import cv2
 import random
 import numpy as np
-import detector.utils as utils
-from detector.config import cfg
+import utils as utils
+from config import cfg
 
 
 class Dataset(object):
