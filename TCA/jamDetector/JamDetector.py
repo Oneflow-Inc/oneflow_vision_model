@@ -1,8 +1,8 @@
 import time
-from jamDetector.Region import Region
-from jamDetector.TrackingObj import TrackingObj
-from jamDetector.Utility import Utility
-from jamDetector.JamState import JamState
+from Region import Region
+from TrackingObj import TrackingObj
+from Utility import Utility
+from JamState import JamState
 import os
 import cv2
 
