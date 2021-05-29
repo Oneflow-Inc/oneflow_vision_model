@@ -29,24 +29,22 @@ the result is below:
 
 - try detect the car for video   
 ```
- cd detector
  python detect_video.py -path=your path/of_dataset/jamDataset
 ```
 
 ### Run and evaluate the jam detector
 - Run the jam detector with the detect result of detect_video.py
 ```
+ cd ..
  cd jamDetector
  python main.py -jam_dataset_path=your path/of_dataset/jamDataset
 ```
 - Run the jam detector with the car detector
 ```
- cd jamDetector
  python main.py -jam_dataset_path=your path/of_dataset/jamDataset -with_detector=True
 ```
 - Run the jam detector with visualization
 ```
- cd jamDetector
  python main.py -jam_dataset_path=your path/of_dataset/jamDataset -is_visualization=True
 ```
 the result of jam is below:  
