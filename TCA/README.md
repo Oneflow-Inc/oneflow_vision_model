@@ -13,8 +13,8 @@ numpy==1.17.4<br>
 ## Get started
 
 ### Download the dataset and model
-- Please download our dataset of car and jam [BaiduNetdis](https://pan.baidu.com/s/18RlpWz7-II3HARcq832IWQ) code:h1ai.
-- Please download our model of car detector [BaiduNetdis](https://pan.baidu.com/s/1DrD2TLP3Rv-S85qj3P3xzg) code:w1am. Please put it in the folder of saved. 
+- Please download our dataset of car and jam [BaiduNetdis](https://pan.baidu.com/s/1jURriB8vg7daobBeeWu16w) code:5b0r.
+- Please download our model of car detector [BaiduNetdis](https://pan.baidu.com/s/1RAABK6MubYRfEIz5xpxhRg) code:rz6v,decompress and put it in the folder of saved. 
 
 ### Run the car detector
 
