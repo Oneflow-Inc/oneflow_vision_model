@@ -1,7 +1,7 @@
-from jamDetector.Utility import Utility
-from jamDetector.JamDetector import JamDetector
-from jamDetector.Detector import Detector
-from jamDetector.Config import Config
+from Utility import Utility
+from JamDetector import JamDetector
+from Detector import Detector
+from Config import Config
 import os
 import argparse
 
