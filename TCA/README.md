@@ -56,7 +56,7 @@ the result of no jam is below:
 ### How to train car detector
 ```
  python generate_txt.py -dataset_path=your path/of_dataset/dataset
- cd jamDetector
+ cd detector
  python train.py 
 ```
 ## The evaluate result of jam detection
