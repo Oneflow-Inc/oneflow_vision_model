@@ -20,7 +20,8 @@ numpy==1.19.2<br>
 
 - try detect the car for image  
 ```
- python detector/demo.py
+ cd detector
+ python demo.py
 ```   
 the result is below:  
 ![1](https://user-images.githubusercontent.com/26379410/119995968-bee2ce00-c000-11eb-9a92-e8b8edf70530.png)
@@ -28,21 +29,25 @@ the result is below:
 
 - try detect the car for video   
 ```
- python detector/detect_video.py -path=your path/of_dataset/jamDataset
+ cd detector
+ python detect_video.py -path=your path/of_dataset/jamDataset
 ```
 
 ### Run and evaluate the jam detector
 - Run the jam detector with the detect result of detect_video.py
 ```
- python jamDetector/main.py -jam_dataset_path=your path/of_dataset/jamDataset
+ cd jamDetector
+ python main.py -jam_dataset_path=your path/of_dataset/jamDataset
 ```
 - Run the jam detector with the car detector
 ```
- python jamDetector/main.py -jam_dataset_path=your path/of_dataset/jamDataset -with_detector=True
+ cd jamDetector
+ python main.py -jam_dataset_path=your path/of_dataset/jamDataset -with_detector=True
 ```
 - Run the jam detector with visualization
 ```
- python jamDetector/main.py -jam_dataset_path=your path/of_dataset/jamDataset -is_visualization=True
+ cd jamDetector
+ python main.py -jam_dataset_path=your path/of_dataset/jamDataset -is_visualization=True
 ```
 the result of jam is below:  
 ![2](https://user-images.githubusercontent.com/26379410/119996100-e8035e80-c000-11eb-82fd-32324d8ba0d4.png)  
@@ -53,7 +58,8 @@ the result of no jam is below:
 ### How to train car detector
 ```
  python generate_txt.py -dataset_path=your path/of_dataset/dataset
- python detector/train.py 
+ cd jamDetector
+ python train.py 
 ```
 ## The evaluate result of jam detection
 
