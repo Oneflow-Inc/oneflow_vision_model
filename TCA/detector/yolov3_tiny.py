@@ -1,8 +1,8 @@
 import numpy as np
 import oneflow as flow
 import oneflow.core.operator.op_conf_pb2 as op_conf_util
-from detector.flow_utils import *
-from detector.resnet import resnet50
+from flow_utils import *
+from resnet import resnet50
 
 class Yolov3_tiny:
     def __init__(self, cfg, trainable, data_format='NCHW'):
