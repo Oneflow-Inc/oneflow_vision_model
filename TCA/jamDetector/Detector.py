@@ -1,7 +1,7 @@
 import sys
 
 sys.path.append('../detector')
-import detector.detect_video as detect_video
+import detect_video as detect_video
 
 
 class Detector:
