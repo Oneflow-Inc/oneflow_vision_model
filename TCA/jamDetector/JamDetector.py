@@ -349,9 +349,9 @@ class JamDetector:
         cap = cv2.VideoCapture(video_filename)
         while cap.isOpened():
             ret, img = cap.read()
-            detect_img = img.copy()
             if not ret:
                 break
+            detect_img = img.copy()
             if is_visualization:
                 self.region_info.draw(img)
             begin_time = time.time()
