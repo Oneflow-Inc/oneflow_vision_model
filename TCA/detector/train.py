@@ -4,9 +4,9 @@ from typing import Tuple
 import numpy as np
 import time
 import os
-from detector.yolov3_tiny import Yolov3_tiny
-from detector.dataset import Dataset
-from detector.config import cfg
+from yolov3_tiny import Yolov3_tiny
+from dataset import Dataset
+from config import cfg
 
 np.set_printoptions(threshold=np.inf)
 
