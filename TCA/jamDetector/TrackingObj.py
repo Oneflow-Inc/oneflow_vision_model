@@ -1,5 +1,5 @@
-from jamDetector.Utility import Utility
-from jamDetector.Region import Region
+from Utility import Utility
+from Region import Region
 import random
 import cv2
 
