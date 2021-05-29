@@ -1,9 +1,9 @@
 import oneflow as flow
 import oneflow.typing as tp
 import numpy as np
-from detector.yolov3_tiny import Yolov3_tiny
-from detector.config import cfg
-import detector.utils as utils
+from yolov3_tiny import Yolov3_tiny
+from config import cfg
+import utils as utils
 import cv2
 from PIL import Image
 
