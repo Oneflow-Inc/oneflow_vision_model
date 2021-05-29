@@ -18,7 +18,7 @@ class Detector:
         detect_img = img
         if roi is not None:
             image_h, image_w, _ = detect_img.shape
-            l, t, r, b = roi
+            l, t, r, b = detect_video.double_rect(roi)
             l = max(0, l)
             t = max(0, t)
             r = min(r, image_w)
