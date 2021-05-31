@@ -9,6 +9,15 @@ We've checked the reproducibilities of the results in the paper.
 |Paris StreetView|True|
 |CelebA|True|
 
+### Performance
+
+| Method | environment | SSIM(%) | PSNR |                                                                                                                                                                        
+|--------|----------|------|-----------|
+| RFR    | Pytorch    | 84.5 | 25.8 | 
+| RFR    | Oneflow   |  74.4 | 18.7  |   
+
+
+
 
 ## Running the program
 
