@@ -14,6 +14,9 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [GhostNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/ghostnet)
 * [HRNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/Hrnet)
 * [LeNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/LeNet)
+* [Scnet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/Scnet)
+* [poseNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/poseNet)
+* [TCA](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TCA)
 
 The details of each project can be found in the corresponding folders. 
 
