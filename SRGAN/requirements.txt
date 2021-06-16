@@ -1,0 +1,8 @@
+six==1.15.0
+matplotlib==3.3.4
+numpy==1.19.5
+oneflow_cu102==0.3.4
+opencv_python==4.5.1.48
+scikit_image==0.17.2
+Pillow==8.2.0
+skimage==0.0

@@ -18,70 +18,11 @@ import numpy as np
 import imageio
 import glob
 import os
-import layers
-# import pix_layers as layers
+import test_layers as layers
 import matplotlib.pyplot as plt
 import time
-import logging
-from io import TextIOBase
-import sys
-from datetime import datetime
-os.environ["CUDA_VISIBLE_DEVICES"] = "3"
 
-logger = logging.getLogger(__name__)
-log_level_map = {
-    'fatal': logging.FATAL,
-    'error': logging.ERROR,
-    'warning': logging.WARNING,
-    'info': logging.INFO,
-    'debug': logging.DEBUG
-}
-
-_time_format = '%m/%d/%Y, %I:%M:%S %p'
-
-class _LoggerFileWrapper(TextIOBase):
-    def __init__(self, logger_file):
-        self.file = logger_file
-
-    def write(self, s):
-        if s != '\n':
-            cur_time = datetime.now().strftime(_time_format)
-            self.file.write('[{}] PRINT '.format(cur_time) + s + '\n')
-            self.file.flush()
-        return len(s)
-
-def init_logger(logger_file_path, log_level_name='info'):
-    """Initialize root logger.
-    This will redirect anything from logging.getLogger() as well as stdout to specified file.
-    logger_file_path: path of logger file (path-like object).
-    """
-    
-    log_level = log_level_map.get(log_level_name)
-    logger_file = open(logger_file_path, 'w')
-    fmt = '[%(asctime)s] %(levelname)s (%(name)s/%(threadName)s) %(message)s'
-    logging.Formatter.converter = time.localtime
-    formatter = logging.Formatter(fmt, _time_format)
-
-    stream_handler = logging.StreamHandler()
-    stream_handler.setFormatter(formatter)
-    file_handler = logging.FileHandler(logger_file_path)
-    file_handler.setFormatter(formatter)
-
-    root_logger = logging.getLogger()
-    root_logger.addHandler(stream_handler)
-    root_logger.addHandler(file_handler)
-    root_logger.setLevel(log_level)
-
-    # include print function output
-    sys.stdout = _LoggerFileWrapper(logger_file)
-
-def mkdirs(*args):
-    for path in args:
-        dirname = os.path.dirname(path)
-        if dirname and not os.path.exists(dirname):
-            logger.info("Make {} in dir: {}".format(path, dirname))
-            os.makedirs(dirname)
-
+os.environ['CUDA_VISIBLE_DEVICES'] = '1'
 class DCGAN:
     def __init__(self, args):
         self.lr = args.learning_rate
@@ -90,7 +31,10 @@ class DCGAN:
         self.eval_size = 16
         self.seed = np.random.normal(0, 1, size=(self.eval_size, self.z_dim)).astype(
             np.float32)
-        self.path = args.train_out
+        self.path = args.path
+        if not os.path.exists(self.path):
+            os.mkdir(self.path)
+            print("Make new dir '{}' done.".format(self.path))
         self.gpus_per_node = args.gpu_num_per_node
         self.label_smooth = args.label_smooth
         self.G_loss = []
@@ -98,17 +42,17 @@ class DCGAN:
 
         self.batch_size = args.batch_size * self.gpus_per_node
 
-        # self.checkpoint_path = os.path.join(self.path, "checkpoint")
-        # if not os.path.exists(self.checkpoint_path):
-        #     os.mkdir(self.checkpoint_path)
-        # self.images_path = os.path.join(self.path, "images")
-        # if not os.path.exists(self.images_path):
-        #     os.mkdir(self.images_path)
+        self.checkpoint_path = os.path.join(self.path, "checkpoint")
+        if not os.path.exists(self.checkpoint_path):
+            os.mkdir(self.checkpoint_path)
+        self.images_path = os.path.join(self.path, "images")
+        if not os.path.exists(self.images_path):
+            os.mkdir(self.images_path)
         # self.train_images_path = os.path.join(self.path, "train_images")
         # if not os.path.exists(self.train_images_path):
         #     os.mkdir(self.train_images_path)
 
-    def train(self, epochs, data_path, save=True):
+    def train(self, epochs=1, model_dir=None, save=True):
         func_config = flow.FunctionConfig()
         func_config.default_data_type(flow.float)
         flow.config.gpu_device_num(self.gpus_per_node)
@@ -119,40 +63,38 @@ class DCGAN:
             z: tp.Numpy.Placeholder((self.batch_size, self.z_dim)),
             label1: tp.Numpy.Placeholder((self.batch_size, 1))
         ) -> Tuple[tp.Numpy, tp.Numpy]:
-            with flow.scope.placement("gpu", "0:0"):
-                g_out = self.generator(z, trainable=True)
-                g_logits = self.discriminator(g_out, trainable=False)
-                g_loss = flow.nn.sigmoid_cross_entropy_with_logits(
-                    label1, g_logits, name="Gloss_sigmoid_cross_entropy_with_logits"
-                )
-                g_loss = flow.math.reduce_mean(g_loss)
-                
-                flow.optimizer.Adam(lr_scheduler).minimize(g_loss)
+            g_out = self.generator(z, trainable=True)
+            g_logits = self.discriminator(g_out, trainable=False)
+            g_loss = flow.nn.sigmoid_cross_entropy_with_logits(
+                label1, g_logits, name="Gloss_sigmoid_cross_entropy_with_logits"
+            )
+            g_loss = flow.math.reduce_mean(g_loss)
             
+            flow.optimizer.Adam(lr_scheduler).minimize(g_loss)
+        
             return (g_loss, g_out)
 
         @flow.global_function(type="train", function_config=func_config)
         def train_discriminator(
-            z: tp.Numpy.Placeholder((self.batch_size, self.z_dim)),
+            z: tp.Numpy.Placeholder((self.batch_size, 100)),
             images: tp.Numpy.Placeholder((self.batch_size, 1, 28, 28)),
             label1: tp.Numpy.Placeholder((self.batch_size, 1)),
             label0: tp.Numpy.Placeholder((self.batch_size, 1))
         )-> Tuple[tp.Numpy, tp.Numpy, tp.Numpy]:
-            with flow.scope.placement("gpu", "0:0"):
-                g_out = self.generator(z, trainable=False)
-                g_logits = self.discriminator(g_out, trainable=True)
-                d_loss_fake = flow.nn.sigmoid_cross_entropy_with_logits(
-                    label0, g_logits, name="Dloss_fake_sigmoid_cross_entropy_with_logits"
-                )
+            g_out = self.generator(z, trainable=False)
+            g_logits = self.discriminator(g_out, trainable=True)
+            d_loss_fake = flow.nn.sigmoid_cross_entropy_with_logits(
+                label0, g_logits, name="Dloss_fake_sigmoid_cross_entropy_with_logits"
+            )
 
-                d_logits = self.discriminator(images, trainable=True, reuse=True)
-                
-                d_loss_real = flow.nn.sigmoid_cross_entropy_with_logits(
-                    label1, d_logits, name="Dloss_real_sigmoid_cross_entropy_with_logits"
-                )
-                d_loss = d_loss_fake + d_loss_real
+            d_logits = self.discriminator(images, trainable=True, reuse=True)
+            
+            d_loss_real = flow.nn.sigmoid_cross_entropy_with_logits(
+                label1, d_logits, name="Dloss_real_sigmoid_cross_entropy_with_logits"
+            )
+            d_loss = d_loss_fake + d_loss_real
 
-                flow.optimizer.Adam(lr_scheduler).minimize(d_loss)
+            flow.optimizer.Adam(lr_scheduler).minimize(d_loss)
 
             return (d_loss, d_loss_fake, d_loss_real)
 
@@ -160,14 +102,13 @@ class DCGAN:
         def eval_generator(
             z: tp.Numpy.Placeholder((self.eval_size, self.z_dim))
             )-> tp.Numpy:
-            with flow.scope.placement("gpu", "0:0"):
-                g_out = self.generator(z, trainable=False)
+            g_out = self.generator(z, trainable=False)
             return g_out
 
         check_point = flow.train.CheckPoint()
         check_point.init()
 
-        x, _ = self.load_mnist(data_path)
+        x, _ = self.load_mnist()
         batch_num = len(x) // self.batch_size
         label1 = np.ones((self.batch_size, 1)).astype(np.float32)
         label0 = np.zeros((self.batch_size, 1)).astype(np.float32)
@@ -176,34 +117,34 @@ class DCGAN:
         for epoch_idx in range(epochs):
             start = time.time()
             for batch_idx in range(batch_num):
-                z = np.random.normal(0, 1, size=(self.batch_size, self.z_dim)).astype(np.float32, order="C")
+                z = np.random.normal(0, 1, size=(self.batch_size, self.z_dim)).astype(np.float32)
                 images = x[
                     batch_idx * self.batch_size : (batch_idx + 1) * self.batch_size
-                ].astype(np.float32, order="C")
+                ].astype(np.float32)
                 if self.label_smooth != 0:
                     d_loss, d_loss_fake, d_loss_real = train_discriminator(z, images, label1_smooth, label0)
                 else:
                     d_loss, d_loss_fake, d_loss_real = train_discriminator(z, images, label1, label0)
                 g_loss, g_out = train_generator(z, label1)
-                
+
                 if (batch_idx + 1) % 10 == 0:
                     self.G_loss.append(g_loss.mean())
                     self.D_loss.append(d_loss.mean())
                 
                 batch_total = batch_idx + epoch_idx * batch_num * self.batch_size
                 if (batch_idx + 1) % self.eval_interval == 0:
-                    logger.info(
+                    print(
                         "{}th epoch, {}th batch, d_fakeloss:{:>12.10f}, d_realloss:{:>12.10f}, d_loss:{:>12.10f}, g_loss:{:>12.10f}".format(
                             epoch_idx + 1, batch_idx + 1, d_loss_fake.mean(), d_loss_real.mean(), d_loss.mean(), g_loss.mean()
                         )
                     )
 
-            # self._eval_model_and_save_images(
-            #     eval_generator, batch_idx + 1, epoch_idx + 1
-            # )
+            self._eval_model_and_save_images(
+                eval_generator, batch_idx + 1, epoch_idx + 1
+            )
             # self.save_images(g_out, batch_idx + 1, epoch_idx + 1
             # )
-            logger.info("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
+            print("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
 
         if save:
             from datetime import datetime
@@ -213,8 +154,8 @@ class DCGAN:
                 )
             )
         
-        # np.save(os.path.join(self.path, 'g_loss_{}.npy'.format(epochs)), self.G_loss)
-        # np.save(os.path.join(self.path, 'd_loss_{}.npy'.format(epochs)), self.D_loss)
+        np.save(os.path.join(self.path, 'g_loss_{}.npy'.format(epochs)), self.G_loss)
+        np.save(os.path.join(self.path, 'd_loss_{}.npy'.format(epochs)), self.D_loss)
 
     def test(self, eval_size, save_path, model_path):
         func_config = flow.FunctionConfig()
@@ -248,7 +189,7 @@ class DCGAN:
                 writer.append_data(image)
             image = imageio.imread(filename)
             writer.append_data(image)
-        logger.info("Generate {} done.".format(anim_file))
+        print("Generate {} done.".format(anim_file))
 
     def _eval_model_and_save_images(self, model, batch_idx, epoch_idx):
         results = model(self.seed)
@@ -282,6 +223,7 @@ class DCGAN:
             z, 7 * 7 * 256, name="g_fc1", const_init=const_init, trainable=trainable
         )
         h0 = layers.batchnorm(h0, axis=1, name="g_bn1", trainable=trainable)
+        # h0 = layers.batchnorm(h0, axis=1, name="g_bn1")
         h0 = flow.nn.leaky_relu(h0, 0.3)
         h0 = flow.reshape(h0, (-1, 256, 7, 7))
         # (n, 128, 7, 7)
@@ -292,9 +234,10 @@ class DCGAN:
             strides=1,
             name="g_deconv1",
             const_init=const_init,
-            trainable=trainable
+            trainable=trainable,
         )
         h1 = layers.batchnorm(h1, name="g_bn2", trainable=trainable)
+        # h1 = layers.batchnorm(h1, name="g_bn2")
         h1 = flow.nn.leaky_relu(h1, 0.3)
         # (n, 64, 14, 14)
         h2 = layers.deconv2d(
@@ -307,6 +250,7 @@ class DCGAN:
             trainable=trainable,
         )
         h2 = layers.batchnorm(h2, name="g_bn3", trainable=trainable)
+        # h2 = layers.batchnorm(h2, name="g_bn3")
         h2 = flow.nn.leaky_relu(h2, 0.3)
         # (n, 1, 28, 28)
         out = layers.deconv2d(
@@ -366,19 +310,21 @@ class DCGAN:
         ]
         for file_name in file_names:
             url = (url_base + file_name).format(**locals())
+            print(url)
             out_path = os.path.join(data_dir, file_name)
             cmd = ["curl", url, "-o", out_path]
-            logger.info("Downloading ", file_name)
+            print("Downloading ", file_name)
             subprocess.call(cmd)
             cmd = ["gzip", "-d", out_path]
-            logger.info("Decompressing ", file_name)
+            print("Decompressing ", file_name)
             subprocess.call(cmd)
 
-    def load_mnist(self, data_dir, transpose=True):
+    def load_mnist(self, root_dir="./data", dataset_name="mnist", transpose=True):
+        data_dir = os.path.join(root_dir, dataset_name)
         if os.path.exists(data_dir):
-            logger.info("Found MNIST - skip download")
+            print("Found MNIST - skip download")
         else:
-            logger.info("not Found MNIST - start download")
+            print("not Found MNIST - start download")
             if not os.path.exists(root_dir):
                 os.mkdir(root_dir)
             self.download_mnist(data_dir)
@@ -426,30 +372,26 @@ if __name__ == "__main__":
     os.environ["ENABLE_USER_OP"] = "True"
     import argparse
     parser = argparse.ArgumentParser(description="flags for multi-node and resource")
-    parser.add_argument("--data_url", type=str, default='./data/facades', required=True)
-    parser.add_argument("--train_out", type=str, default='./', required=True, help="path of saving model")
-    parser.add_argument("--train_log", type=str, default='./', required=True, help="path of saving model")
-    parser.add_argument("--gpu_num_per_node", type=int, default=1, required=True)
-    parser.add_argument("-e", "--epoch_num", type=int, default=100, required=False)
+    parser.add_argument("--path", type=str, default='of_model', required=False)
+    parser.add_argument("--gpu_num_per_node", type=int, default=1, required=False)
+    parser.add_argument("--epoch_num", type=int, default=100, required=False)
     parser.add_argument("-lr", "--learning_rate", type=float, default=1e-4, required=False)
+    parser.add_argument(
+        "-load", "--model_load_dir", type=str, default="./training_checkpoints/checkpoint", required=False
+    )
     parser.add_argument("--batch_size", type=int, default=200, required=False)
-    parser.add_argument("--label_smooth", type=float, default=0.0, required=False)
+    parser.add_argument("--label_smooth", type=float, default=0.15, required=False)
     parser.add_argument("--test", action='store_true', default=False)
     args = parser.parse_args()
+    print(args)
 
-    args.train_log = os.path.join(args.train_log, "train_log")
-    mkdirs(args.train_out, args.train_log)
-    init_logger(args.train_log)
-    logger.info(args)
     dcgan = DCGAN(args)
     if not args.test:
         # train 
-        dcgan.train(args.epoch_num, args.data_url)
-        # dcgan.save_to_gif()
+        dcgan.train(args.epoch_num)
+        dcgan.save_to_gif()
     else:
         # test
         save_path = "eval_images.png"
         model_path = "./models/dcgan"
         dcgan.test(16, save_path, model_path)
-
-

@@ -14,7 +14,7 @@ oneflow==0.1.10<br>
 If you want to run train and test on small dataset (e.g., Facades, about 30.9M), this project will automatically download this dataset in "./data/facades".<br>
 
 ### Train a model
-python of_pix2pix.py
+python of_pix2pix.py --data_url './data/facades' --train_out './' --train_log './train_log'
 
 ### Download pretrained model
 If you just want to run test, you can download pretrained model

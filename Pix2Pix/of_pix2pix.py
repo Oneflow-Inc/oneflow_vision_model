@@ -21,28 +21,82 @@ import pix_layers as layers
 import matplotlib.pyplot as plt
 import time, shutil
 import glob
-os.environ['CUDA_VISIBLE_DEVICES'] = '2'
+from datetime import datetime
+import logging
+from io import TextIOBase
+import sys
+
+logger = logging.getLogger(__name__)
+log_level_map = {
+    'fatal': logging.FATAL,
+    'error': logging.ERROR,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
+}
+
+_time_format = '%m/%d/%Y, %I:%M:%S %p'
+
+class _LoggerFileWrapper(TextIOBase):
+    def __init__(self, logger_file):
+        self.file = logger_file
+
+    def write(self, s):
+        if s != '\n':
+            cur_time = datetime.now().strftime(_time_format)
+            self.file.write('[{}] PRINT '.format(cur_time) + s + '\n')
+            self.file.flush()
+        return len(s)
+
+def init_logger(logger_file_path, log_level_name='info'):
+    """Initialize root logger.
+    This will redirect anything from logging.getLogger() as well as stdout to specified file.
+    logger_file_path: path of logger file (path-like object).
+    """
+    
+    log_level = log_level_map.get(log_level_name)
+    logger_file = open(logger_file_path, 'w')
+    fmt = '[%(asctime)s] %(levelname)s (%(name)s/%(threadName)s) %(message)s'
+    logging.Formatter.converter = time.localtime
+    formatter = logging.Formatter(fmt, _time_format)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    file_handler = logging.FileHandler(logger_file_path)
+    file_handler.setFormatter(formatter)
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(stream_handler)
+    root_logger.addHandler(file_handler)
+    root_logger.setLevel(log_level)
+
+    # include print function output
+    sys.stdout = _LoggerFileWrapper(logger_file)
+
+def mkdirs(*args):
+    for path in args:
+        dirname = os.path.dirname(path)
+        if dirname and not os.path.exists(dirname):
+            logger.info("Make {} in dir: {}".format(path, dirname))
+            os.makedirs(dirname)
 
 class Pix2Pix:
     def __init__(self, args):
         self.lr = args.learning_rate
         self.out_channels = 3
         self.img_size = 256
-        self.LAMBDA = args.LAMBDA
         self.eval_interval = 10
+        self.LAMBDA = args.LAMBDA
         self.label_smooth = args.label_smooth
-
-        self.batch_size = args.batch_size
-        self.path = args.path
-        if not os.path.exists(self.path):
-            os.mkdir(self.path)
-            print("Make new dir '{}' done.".format(self.path))
-        self.checkpoint_path = os.path.join(self.path, "checkpoint")
-        if not os.path.exists(self.checkpoint_path):
-            os.mkdir(self.checkpoint_path)
-        self.test_images_path = os.path.join(self.path, "test_images")
-        if not os.path.exists(self.test_images_path):
-            os.mkdir(self.test_images_path)
+        self.gpus_per_node = args.gpu_num_per_node
+        self.batch_size = args.batch_size * self.gpus_per_node
+        self.path = args.train_out
+        # self.checkpoint_path = os.path.join(self.path, "checkpoint")
+        # if not os.path.exists(self.checkpoint_path):
+        #     os.mkdir(self.checkpoint_path)
+        # self.test_images_path = os.path.join(self.path, "test_images")
+        # if not os.path.exists(self.test_images_path):
+        #     os.mkdir(self.test_images_path)
 
     def _downsample(
         self,
@@ -269,12 +323,11 @@ class Pix2Pix:
 
         return conv2
 
-    def load_facades(self, mode="train"):
+    def load_facades(self, data_path, mode="train"):
         from PIL import Image, ImageOps
-        data_path = "./data/facades"
         seed=np.random.randint(1024)
         if not os.path.exists(data_path):
-            print("not Found Facades - start download")
+            logger.info("not Found Facades - start download")
             import tensorflow as tf
             if not os.path.exists("data"):
                 os.mkdir("data")
@@ -282,7 +335,7 @@ class Pix2Pix:
             _URL = "https://people.eecs.berkeley.edu/~tinghuiz/projects/pix2pix/datasets/facades.tar.gz"
             path_to_zip = tf.keras.utils.get_file(_PATH, origin=_URL, extract=True)
         else:
-            # print("Found Facades - skip download")
+            # logger.info("Found Facades - skip download")
             pass
 
         input_imgs, real_imgs = [], []
@@ -361,9 +414,10 @@ class Pix2Pix:
         plt.savefig(save_path)
         plt.close()
 
-    def test(self, eval_size, model_path, save_path):
+    def test(self, eval_size, data_path, model_path, save_path):
         func_config = flow.FunctionConfig()
         func_config.default_data_type(flow.float)
+        flow.config.gpu_device_num(self.gpus_per_node)
         @flow.global_function(type="predict", function_config=func_config)
         def eval_generator(
             input: tp.Numpy.Placeholder((eval_size, 3, 256, 256))
@@ -374,19 +428,18 @@ class Pix2Pix:
         check_point = flow.train.CheckPoint()
         check_point.load(model_path)
 
-        test_x, test_y = self.load_facades(mode="test")
+        test_x, test_y = self.load_facades(data_path, mode="test")
         ind = np.random.choice(len(test_x) // eval_size)
         test_inp = test_x[ind * eval_size : (ind + 1) * eval_size].astype(np.float32, order="C")
         test_target = test_y[ind * eval_size : (ind + 1) * eval_size].astype(np.float32, order="C")
-        print(test_inp.shape)
-        print(test_target.shape)
         gout = eval_generator(test_inp)
         # save images
-        self.save_images(gout, test_inp, test_target, eval_size, name="eval", path=save_path)
+        # self.save_images(gout, test_inp, test_target, eval_size, name="eval", path=save_path)
 
-    def train(self, epochs, save=True):
+    def train(self, epochs, data_path, save=True):
         func_config = flow.FunctionConfig()
         func_config.default_data_type(flow.float)
+        flow.config.gpu_device_num(self.gpus_per_node)
         lr_scheduler = flow.optimizer.PiecewiseConstantScheduler([], [self.lr])
 
         @flow.global_function(type="train", function_config=func_config)
@@ -443,18 +496,17 @@ class Pix2Pix:
         
         G_image_loss, G_GAN_loss, G_total_loss, D_loss = [], [], [], []
         test_G_image_error = []
-        x, _ = self.load_facades()
+        x, _ = self.load_facades(data_path)
         batch_num = len(x) // self.batch_size
         label1 = np.ones((self.batch_size, 1, 30, 30)).astype(np.float32)
         if self.label_smooth != 0:
             label1_smooth = label1 - self.label_smooth 
         label0 = np.zeros((self.batch_size, 1, 30, 30)).astype(np.float32)
-        smallest_image_error = 0.5
-        pre_smallest = -1
+     
         for epoch_idx in range(epochs):
             start = time.time()
             # run every epoch to shuffle
-            x, y = self.load_facades()
+            x, y = self.load_facades(data_path)
             for batch_idx in range(batch_num):
                 inp = x[
                     batch_idx * self.batch_size : (batch_idx + 1) * self.batch_size
@@ -478,15 +530,15 @@ class Pix2Pix:
                 G_total_loss.append(g_total_loss)
                 D_loss.append(d_loss)
                 if (batch_idx + 1) % self.eval_interval == 0:
-                    print("############## train ###############")
-                    print(
+                    logger.info("############## train ###############")
+                    logger.info(
                         "{}th epoch, {}th batch, dloss:{}, g_gan_loss:{}, g_image_loss:{}, g_total_loss:{}".format(
                             epoch_idx + 1, batch_idx + 1, d_loss, g_gan_loss, g_image_loss, g_total_loss 
                         )
                     )
             
             # calculate test error to validate the trained model
-            if (epoch_idx + 1) % 50 == 0:
+            if (epoch_idx + 1) % 20 == 0:
                 # run every epoch to shuffle
                 test_x, test_y = self.load_facades(mode="test")
                 ind = np.random.choice(len(test_x) // self.batch_size)
@@ -495,26 +547,26 @@ class Pix2Pix:
                 gout, test_image_error = eval_generator(test_inp, test_target)
                 # save images
                 # self.save_images(g_out, inp, target, epoch_idx, name="train")
-                self.save_images(gout, test_inp, test_target, epoch_idx, name="test")
-                print("############## evaluation ###############")
-                print("{}th epoch, {}th batch, test_image_error:{}".format(epoch_idx + 1, batch_idx + 1, test_image_error.mean()))
+                # self.save_images(gout, test_inp, test_target, epoch_idx, name="test")
+                logger.info("############## evaluation ###############")
+                logger.info("{}th epoch, {}th batch, test_image_error:{}".format(epoch_idx + 1, batch_idx + 1, test_image_error.mean()))
             
-            print("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
+            logger.info("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
 
         if save:
             from datetime import datetime
             check_point.save(
-                os.path.join(self.checkpoint_path, "pix2pix_{}".format(
+                os.path.join(self.path, "pix2pix_{}".format(
                     str(datetime.now().strftime("%Y-%m-%d-%H:%M:%S")))
                 )
             )
 
         # save train loss and val error to plot
-        np.save(os.path.join(self.path, 'G_image_loss_{}.npy'.format(epochs)), G_image_loss)
-        np.save(os.path.join(self.path, 'G_GAN_loss_{}.npy'.format(epochs)), G_GAN_loss)
-        np.save(os.path.join(self.path, 'G_total_loss_{}.npy'.format(epochs)), G_total_loss)
-        np.save(os.path.join(self.path, 'D_loss_{}.npy'.format(epochs)), D_loss)
-        print("*************** Train {} done ***************** ".format(self.path))
+        # np.save(os.path.join(self.path, 'G_image_loss_{}.npy'.format(epochs)), G_image_loss)
+        # np.save(os.path.join(self.path, 'G_GAN_loss_{}.npy'.format(epochs)), G_GAN_loss)
+        # np.save(os.path.join(self.path, 'G_total_loss_{}.npy'.format(epochs)), G_total_loss)
+        # np.save(os.path.join(self.path, 'D_loss_{}.npy'.format(epochs)), D_loss)
+        logger.info("*************** Train {} done ***************** ".format(self.path))
 
     def save_to_gif(self):
         anim_file = os.path.join(self.path, "pix2pix .gif")
@@ -532,28 +584,35 @@ class Pix2Pix:
                 writer.append_data(image)
             image = imageio.imread(filename)
             writer.append_data(image)
-        print("Generate {} done.".format(anim_file))
+        logger.info("Generate {} done.".format(anim_file))
 
 if __name__ == "__main__":
     os.environ["ENABLE_USER_OP"] = "True"
     import argparse
     parser = argparse.ArgumentParser(description="flags for multi-node and resource")
+    parser.add_argument("--data_url", type=str, default='./data/facades', required=True)
+    parser.add_argument("--train_out", type=str, default='./', required=True, help="path of saving model")
+    parser.add_argument("--train_log", type=str, default='./', required=True, help="path of saving model")
+    parser.add_argument("--gpu_num_per_node", type=int, default=1, required=True)
     parser.add_argument("-e", "--epoch_num", type=int, default=200, required=False)
     parser.add_argument("-lr", "--learning_rate", type=float, default=2e-4, required=False)
     parser.add_argument("--LAMBDA", type=float, default=100, required=False)
-    parser.add_argument("--path", type=str, default='./of_pix2pix', required=False)
     parser.add_argument("--batch_size", type=int, default=32, required=False)
     parser.add_argument("--label_smooth", type=float, default=0, required=False)
     parser.add_argument("--test", action='store_true', default=False)
     args = parser.parse_args()
-    print(args)
     
+    args.train_log = os.path.join(args.train_log, "train_log")
+    mkdirs(args.train_out, args.train_log)
+    init_logger(args.train_log)
+    logger.info(args)
     pix2pix = Pix2Pix(args)
     if not args.test:
-        # pix2pix.train(epochs=args.epoch_num)
-        pix2pix.save_to_gif()
+        pix2pix.train(args.epoch_num, args.data_url)
+        # if args.epoch_num > 20:
+        #     pix2pix.save_to_gif()
     else:
         save_path = "eval_images.png"
         model_path = "./models/pix2pix"
-        pix2pix.test(16, model_path, save_path)
+        pix2pix.test(16, args.model_path, args.save_path, args.data_url)
 

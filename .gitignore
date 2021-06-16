@@ -13,4 +13,6 @@ Pix2Pix/models/
 SRGAN/data/
 SRGAN/log/
 SRGAN/models/
+DCGAN/data/
 
+.vscode

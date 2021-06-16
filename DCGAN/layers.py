@@ -28,7 +28,7 @@ def deconv2d(
     weight_shape = (input.shape[1], filters, size, size)
     output_shape = (
         input.shape[0],
-        input.shape[1],
+        filters,
         input.shape[2] * strides,
         input.shape[3] * strides,
     )
@@ -46,7 +46,7 @@ def deconv2d(
 
     output = flow.nn.conv2d_transpose(
         input,
-        weight,
+        filter=weight,
         strides=[strides, strides],
         output_shape=output_shape,
         padding="SAME",
@@ -81,7 +81,7 @@ def conv2d(
 ):
     name_ = name if reuse == False else name + "_reuse"
 
-    # (output_dim, k_h, k_w, input.shape[3]) if NHWC
+     # weight : [out_channels, in_channels, height, width]
     weight_shape = (filters, input.shape[1], size, size)
     weight = flow.get_variable(
         name + "-weight",

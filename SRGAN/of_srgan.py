@@ -10,7 +10,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 """
-
 import os, cv2
 import time
 import oneflow as flow
@@ -27,39 +26,91 @@ from of_data_utils import load_image, is_image_file
 import skimage.metrics
 from datetime import datetime
 import shutil
+import logging
+from io import TextIOBase
+from datetime import datetime
+import sys
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '1'
+logger = logging.getLogger(__name__)
+log_level_map = {
+    'fatal': logging.FATAL,
+    'error': logging.ERROR,
+    'warning': logging.WARNING,
+    'info': logging.INFO,
+    'debug': logging.DEBUG
+}
 
+_time_format = '%m/%d/%Y, %I:%M:%S %p'
+
+class _LoggerFileWrapper(TextIOBase):
+    def __init__(self, logger_file):
+        self.file = logger_file
+
+    def write(self, s):
+        if s != '\n':
+            cur_time = datetime.now().strftime(_time_format)
+            self.file.write('[{}] PRINT '.format(cur_time) + s + '\n')
+            self.file.flush()
+        return len(s)
+
+def init_logger(logger_file_path, log_level_name='info'):
+    """Initialize root logger.
+    This will redirect anything from logging.getLogger() as well as stdout to specified file.
+    logger_file_path: path of logger file (path-like object).
+    """
+    
+    log_level = log_level_map.get(log_level_name)
+    logger_file = open(logger_file_path, 'w')
+    fmt = '[%(asctime)s] %(levelname)s (%(name)s/%(threadName)s) %(message)s'
+    logging.Formatter.converter = time.localtime
+    formatter = logging.Formatter(fmt, _time_format)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setFormatter(formatter)
+    file_handler = logging.FileHandler(logger_file_path)
+    file_handler.setFormatter(formatter)
+
+    root_logger = logging.getLogger()
+    root_logger.addHandler(stream_handler)
+    root_logger.addHandler(file_handler)
+    root_logger.setLevel(log_level)
+
+    # include print function output
+    sys.stdout = _LoggerFileWrapper(logger_file)
+
+def mkdirs(*args):
+    for path in args:
+        dirname = os.path.dirname(path)
+        if dirname and not os.path.exists(dirname):
+            logger.info("Make {} in dir: {}".format(path, dirname))
+            os.makedirs(dirname)
 class SRGAN:
     def __init__(self, args):
         self.lr = args.lr
-        self.path = args.path
+        self.path = args.train_out
         self.hr_size = args.hr_size
         self.scale_factor = args.scale_factor
         self.residual_num = args.residual_num
-        self.data_dir = args.data_dir
+        self.data_dir = args.data_url
         self.gpu_num_per_node = args.gpu_num_per_node
         self.batch_size = args.batch_size * self.gpu_num_per_node
 
         self.print_interval = 50
-        self.vgg_path = args.vgg_path
+        self.vgg_path = args.model_load_dir
         self.lr_size = self.hr_size // self.scale_factor
 
-        if not os.path.exists(self.path):
-            os.mkdir(self.path)
-            print("Make new dir '{}' done.".format(self.path))
-        self.checkpoint_path = os.path.join(self.path, "checkpoint")
-        if not os.path.exists(self.checkpoint_path):
-            os.mkdir(self.checkpoint_path)
-        self.loss_path = os.path.join(self.path, "loss")
-        if not os.path.exists(self.loss_path):
-            os.mkdir(self.loss_path)
+        # self.checkpoint_path = os.path.join(self.path, "checkpoint")
+        # if not os.path.exists(self.checkpoint_path):
+        #     os.mkdir(self.checkpoint_path)
+        # self.loss_path = os.path.join(self.path, "loss")
+        # if not os.path.exists(self.loss_path):
+        #     os.mkdir(self.loss_path)
         # self.train_images_path = os.path.join(self.path, "train_images")
         # if not os.path.exists(self.train_images_path):
         #     os.mkdir(self.train_images_path)
-        self.val_images_path = os.path.join(self.path, "val_images")
-        if not os.path.exists(self.val_images_path):
-            os.mkdir(self.val_images_path)
+        # self.val_images_path = os.path.join(self.path, "val_images")
+        # if not os.path.exists(self.val_images_path):
+        #     os.mkdir(self.val_images_path)
 
     def Generator(self, inputs, trainable=True):
         upsample_block_num = int(math.log(self.scale_factor, 2))
@@ -329,10 +380,10 @@ class SRGAN:
 
         batch_num = len(train_hr_data) // self.batch_size
         pre_best, best_psnr = -1, 0
-        print("****************** start training *****************")
+        logger.info("****************** start training *****************")
         for epoch_idx in range(epochs):
             start = time.time()
-            print("****************** train  *****************")
+            logger.info("****************** train  *****************")
             for batch_idx in range(batch_num):
                 inputs = train_lr_data[
                     batch_idx * self.batch_size : (batch_idx + 1) * self.batch_size
@@ -362,7 +413,7 @@ class SRGAN:
                     G_total_loss.append(g_total_loss)
                     D_total_loss.append(d_loss)
             
-            print("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
+            logger.info("Time for epoch {} is {} sec.".format(epoch_idx + 1, time.time() - start))
 
             if (epoch_idx + 1) % 1 == 0:
                 # save train images
@@ -383,7 +434,7 @@ class SRGAN:
                     val_psnr += self.psnr(val_target.transpose(0, 2, 3, 1), val_g_out.transpose(0, 2, 3, 1))
                     
                 # save val images
-                self.save_images(val_g_out, val_inputs, val_target, epoch_idx, name="val")
+                # self.save_images(val_g_out, val_inputs, val_target, epoch_idx, name="val")
 
                 val_l2_error = val_l2_error / val_batch_num
                 val_ssim = val_ssim / val_batch_num
@@ -393,33 +444,33 @@ class SRGAN:
                 Val_l2_error.append(val_l2_error)
                 Val_ssim.append(val_ssim)
                 Val_psnr.append(val_psnr)
-                print("****************** evalute  *****************")
-                print(
+                logger.info("****************** evalute  *****************")
+                logger.info(
                     "{}th epoch, {}th batch, val_l2_error:{}, val_ssim:{}, val_psnr:{}.".format(epoch_idx + 1, batch_idx + 1, val_l2_error, val_ssim, val_psnr)
                     )
                 if epoch_idx + 1 > 50 and val_psnr > best_psnr:
                     best_psnr = val_psnr
                     if pre_best != -1:
                         # delete the previous best checkpoint
-                        print("delete the previous best {}th epoch model".format(pre_best))
-                        shutil.rmtree(os.path.join(self.checkpoint_path, "{}th_epoch".format(pre_best)))
+                        logger.info("delete the previous best {}th epoch model".format(pre_best))
+                        shutil.rmtree(os.path.join(self.path, "{}th_epoch".format(pre_best)))
 
                     # save parameters
-                    flow.checkpoint.save(os.path.join(self.checkpoint_path, "{}th_epoch".format(epoch_idx + 1)))
+                    flow.checkpoint.save(os.path.join(self.path, "{}th_epoch".format(epoch_idx + 1)))
                     pre_best = epoch_idx + 1
-                    print("save the best {}th epoch model at {}.".format(epoch_idx + 1, str(datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))))
+                    logger.info("save the best {}th epoch model at {}.".format(epoch_idx + 1, str(datetime.now().strftime("%Y-%m-%d-%H:%M:%S"))))
 
         # save train loss and val error to plot
-        np.save(os.path.join(self.loss_path, 'G_l2_loss_{}.npy'.format(epochs)), G_l2_loss)
-        np.save(os.path.join(self.loss_path, 'G_gan_loss_{}.npy'.format(epochs)), G_gan_loss)
-        np.save(os.path.join(self.loss_path, 'G_perceptual_loss_{}.npy'.format(epochs)), G_perceptual_loss)
-        np.save(os.path.join(self.loss_path, 'G_tv_loss_{}.npy'.format(epochs)), G_tv_loss)
-        np.save(os.path.join(self.loss_path, 'G_total_loss_{}.npy'.format(epochs)), G_total_loss)
-        np.save(os.path.join(self.loss_path, 'D_total_loss_{}.npy'.format(epochs)), D_total_loss)
+        # np.save(os.path.join(self.loss_path, 'G_l2_loss_{}.npy'.format(epochs)), G_l2_loss)
+        # np.save(os.path.join(self.loss_path, 'G_gan_loss_{}.npy'.format(epochs)), G_gan_loss)
+        # np.save(os.path.join(self.loss_path, 'G_perceptual_loss_{}.npy'.format(epochs)), G_perceptual_loss)
+        # np.save(os.path.join(self.loss_path, 'G_tv_loss_{}.npy'.format(epochs)), G_tv_loss)
+        # np.save(os.path.join(self.loss_path, 'G_total_loss_{}.npy'.format(epochs)), G_total_loss)
+        # np.save(os.path.join(self.loss_path, 'D_total_loss_{}.npy'.format(epochs)), D_total_loss)
 
-        np.save(os.path.join(self.loss_path, 'Val_l2_error_{}.npy'.format(epochs)), Val_l2_error)
-        np.save(os.path.join(self.loss_path, 'Val_ssim_{}.npy'.format(epochs)), Val_ssim)
-        np.save(os.path.join(self.loss_path, 'Val_psnr_{}.npy'.format(epochs)), Val_psnr)
+        # np.save(os.path.join(self.loss_path, 'Val_l2_error_{}.npy'.format(epochs)), Val_l2_error)
+        # np.save(os.path.join(self.loss_path, 'Val_ssim_{}.npy'.format(epochs)), Val_ssim)
+        # np.save(os.path.join(self.loss_path, 'Val_psnr_{}.npy'.format(epochs)), Val_psnr)
         print("*************** Train {} done ***************** ".format(self.path))
 
     def save_images(self, images, real_input, target, epoch_idx, name, path=None):
@@ -523,11 +574,12 @@ if __name__ == "__main__":
     import argparse
     parser = argparse.ArgumentParser(description="flags for training SRGAN")
     # Note gpu_num_per_node * batch_size <= 425
-    parser.add_argument("--gpu_num_per_node", type=int, default=1, required=False)
-    parser.add_argument("--epochs", type=int, default=200, required=False)
-    parser.add_argument("--path", type=str, default="./of_srgan", required=False)
-    parser.add_argument("--data_dir", type=str, default="./data", required=False)
-    parser.add_argument("--vgg_path", type=str, default="./models/of_vgg16bn_reuse", required=False)
+    parser.add_argument("--data_url", type=str, default='./data/', required=True)
+    parser.add_argument("--train_out", type=str, default='./', required=True, help="path of saving model")
+    parser.add_argument("--train_log", type=str, default='./', required=True, help="log path of saving model")
+    parser.add_argument("--model_load_dir", type=str, default="./models/of_vgg16bn_reuse", required=True, help="path of loading vgg model")
+    parser.add_argument("--gpu_num_per_node", type=int, default=1, required=True)
+    parser.add_argument("-e", "--epochs", type=int, default=200, required=False)
     parser.add_argument("--lr", type=float, default=0.0002, required=False)
     parser.add_argument("--batch_size", type=int, default=128, required=False)
     parser.add_argument('--hr_size', default=88, type=int, help="the size of high-resolution image")
@@ -539,9 +591,12 @@ if __name__ == "__main__":
     parser.add_argument("--test", action='store_true', default=False)
     parser.add_argument("--test_image", default="monarchx4.png", type=str)
     parser.add_argument("--test_images", default="./", type=str)
-
     args = parser.parse_args()
-    print(args)
+
+    args.train_log = os.path.join(args.train_log, "train_log")
+    mkdirs(args.train_out, args.train_log)
+    init_logger(args.train_log)
+    logger.info(args)
     srgan = SRGAN(args)
 
     if not args.test:
@@ -555,10 +610,10 @@ if __name__ == "__main__":
             image_path = args.test_image
             if is_image_file(image_path):
                 image, H, W, save_path = load_image(image_path)
-                print("the shape of input test image is {}.".format(image.shape))
+                logger.info("the shape of input test image is {}.".format(image.shape))
                 srgan.test_image(image, save_path, model_path)
             else:
-                print("Please input an image.")
+                logger.info("Please input an image.")
         else:
             # test images with the same/different shape
             images_dir = args.test_images
@@ -566,7 +621,7 @@ if __name__ == "__main__":
                 path = os.path.join(images_dir, image_path)
                 if is_image_file(path):
                     image, H, W, save_path = load_image(path)
-                    print("the shape of input test image is {}.".format(image.shape))
+                    logger.info("the shape of input test image is {}.".format(image.shape))
                     srgan.test_image(image, save_path, model_path)
                 else:
                     continue
