@@ -1,0 +1,4 @@
+Log file created at: 2021/06/10 15:26:19
+Running on machine: zj-Z390-UD
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0610 15:26:19.282738 31192 env_global_objects_scope.cpp:182] Check failed: thread_id_ == std::this_thread::get_id() 

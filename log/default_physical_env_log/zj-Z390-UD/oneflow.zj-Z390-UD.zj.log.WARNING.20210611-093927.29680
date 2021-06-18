@@ -1,0 +1,4 @@
+Log file created at: 2021/06/11 09:39:27
+Running on machine: zj-Z390-UD
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+W0611 09:39:27.108108 29680 cuda_device_descriptor_class.cpp:47] unknown error

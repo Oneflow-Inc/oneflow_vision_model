@@ -1,0 +1,19 @@
+Log file created at: 2021/06/10 14:48:25
+Running on machine: zj-Z390-UD
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+E0610 14:48:25.053862 22256 maybe.h:247] 
+error_summary: "Cannot find the kernel matching Current OperatorConf. "
+msg: " The Info of OperatorConf are \n op_name: deconv2d536\n op_type_name: deconv2d\n DeviceType_Name: kCPU\n DataType_Name of in_0: kFloat\n DataType_Name of weight_0: kFloat\n DataType_Name of out_0: kFloat"
+stack_frame {
+  location: "/home/ci-user/runners/release/_work/oneflow/oneflow/oneflow/user/kernels/stateful_local_opkernel.cpp:399"
+  function: "ChooseOpKernel"
+}
+stack_frame {
+  location: "/home/ci-user/runners/release/_work/oneflow/oneflow/oneflow/core/eager/opkernel_instruction_type.cpp:448"
+  function: "Infer"
+}
+op_kernel_not_found_error {
+  op_kernels_not_found_debug_str: "((device_tag == gpu [False]) and (data_type of tensor \'in\' == kFloat))"
+  op_kernels_not_found_debug_str: "((device_tag == gpu [False]) and (data_type of tensor \'in\' == kDouble))"
+}
+F0610 14:48:25.054003 22256 opkernel_instruction_type.cpp:594] Check failed: MaybeIsOk(std::move(LocalCallOpKernelUtil::Infer(instruction))) 

@@ -1,0 +1,4 @@
+Log file created at: 2021/06/10 15:47:34
+Running on machine: zj-Z390-UD
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+F0610 15:47:34.089377  7045 conv_op.cpp:76] Check failed: weight->shape() == Shape(weight_shape) ((64,3,7,7) vs. (64,256,7,7)) 

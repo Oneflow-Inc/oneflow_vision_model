@@ -1,0 +1,20 @@
+Log file created at: 2021/06/10 15:47:28
+Running on machine: zj-Z390-UD
+Log line format: [IWEF]mmdd hh:mm:ss.uuuuuu threadid file:line] msg
+I0610 15:47:28.502544  7045 global.h:36] NewGlobal 14cudaDeviceProp
+I0610 15:47:28.502737  7045 global.h:36] NewGlobal N7oneflow7EnvDescE
+I0610 15:47:28.502744  7045 global.h:36] NewGlobal N7oneflow10ProcessCtxE
+I0610 15:47:28.502749  7045 env_global_objects_scope.cpp:112] using rpc backend: local
+I0610 15:47:28.502756  7045 global.h:36] NewGlobal N7oneflow12ResourceDescE
+I0610 15:47:28.502761  7045 global.h:36] NewGlobal N7oneflow12ResourceDescE
+I0610 15:47:28.503027  7045 global.h:36] NewGlobal N7oneflow10ThreadPoolE
+I0610 15:47:28.503175  7045 global.h:36] NewGlobal N7oneflow2vm19VirtualMachineScopeE
+I0610 15:47:28.503182  7045 global.h:36] NewGlobal N7oneflow9OneflowVME
+I0610 15:47:28.504681  7045 global.h:36] NewGlobal N7oneflow27EagerJobBuildAndInferCtxMgrE
+I0610 15:47:28.504694  7045 global.h:36] NewGlobal N7oneflow16EagerNcclCommMgrE
+I0610 15:47:28.504698  7045 global.h:36] NewGlobal N7oneflow18CudnnConvAlgoCacheE
+I0610 15:47:28.504703  7045 global.h:36] NewGlobal N7oneflow12EpollCommNetE
+I0610 15:47:28.504758  7045 epoll_comm_network.cpp:63] CommNet:Epoll listening on 0.0.0.0:40411
+I0610 15:47:28.504773  7045 epoll_comm_network.cpp:198] machine 0 sockfd -1
+I0610 15:47:28.504827  7045 global.h:36] NewGlobal N7oneflow9TransportE
+F0610 15:47:34.089377  7045 conv_op.cpp:76] Check failed: weight->shape() == Shape(weight_shape) ((64,3,7,7) vs. (64,256,7,7)) 
