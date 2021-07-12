@@ -167,18 +167,18 @@ def MobileNetV3_Small(x, data_format="NCHW", num_class=1000):
     layerneck = mnv3_unit("small-neck1", layer1, 3, 16, 16, True, 1, "_relu", 16)
     layerneck = mnv3_unit("small-neck2", layerneck, 3, 72, 24, False, 2, "_relu", None)
     layerneck = mnv3_unit("small-neck3", layerneck, 3, 88, 24, False, 1, "_relu", None)
-    layerneck = mnv3_unit("small-neck4", layerneck, 5, 96, 40, False, 2, "_hswish", 40)
+    layerneck = mnv3_unit("small-neck4", layerneck, 5, 96, 40, True, 2, "_hswish", 40)
     layerneck = mnv3_unit("small-neck5", layerneck, 5, 240, 40, True, 1, "_hswish", 40)
     layerneck = mnv3_unit("small-neck6", layerneck, 5, 240, 40, True, 1, "_hswish", 40)
-    layerneck = mnv3_unit("small-neck7", layerneck, 5, 120, 48, False, 1, "_hswish", 48)
+    layerneck = mnv3_unit("small-neck7", layerneck, 5, 120, 48, True, 1, "_hswish", 48)
     layerneck = mnv3_unit("small-neck8", layerneck, 5, 144, 48, True, 1, "_hswish", 48)
-    layerneck = mnv3_unit("small-neck9", layerneck, 5, 288, 96, False, 2, "_hswish", 96)
+    layerneck = mnv3_unit("small-neck9", layerneck, 5, 288, 96, True, 2, "_hswish", 96)
     layerneck = mnv3_unit("small-neck10", layerneck, 5, 576, 96, True, 1, "_hswish", 96)
     layerneck = mnv3_unit("small-neck11", layerneck, 5, 576, 96, True, 1, "_hswish", 96)
 
     layer2 = small_unit("small-layer2", layerneck, num_filter=576, act="_hswish", padding="VALID")
-    layer_avg = flow.nn.avg_pool2d(layer2, ksize=[layer2.shape[2], layer2.shape[3]], strides=None, padding="VALID")
-    layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1))
+    layer_avg = flow.nn.avg_pool2d(layer2, ksize=[layer2.shape[2], layer2.shape[3]], strides=None, padding="VALID")  # review it
+    layer_view = flow.reshape(layer_avg, (layer_avg.shape[0], -1))  # review it
     dense3 = flow.layers.dense(
         layer_view, 
         units=1280, 
