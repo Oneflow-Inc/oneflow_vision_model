@@ -1,5 +1,6 @@
 # Vision Model Zoo
 
+The algorithms is implemented with old lazy interface.
 In this repo, we supply several computer vision applications based on OneFlow, including:
 
 * [Re-ID](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/Re-ID)
