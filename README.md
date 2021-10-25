@@ -9,7 +9,7 @@ In this repo, we supply several computer vision applications based on OneFlow, i
 * [SRGAN](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/SRGAN)
 * [Face Segmentation](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/face_seg)
 * [Action Recognition](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TSN)
-* [Restrack(yolov3)](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/restrack)
+* [Restrack(Yolov3)](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/restrack)
 * [TTSR](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/TTSR)
 * [AP3D](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/AP3D)
 * [GhostNet](https://github.com/Oneflow-Inc/oneflow_vision_model/tree/main/ghostnet)
